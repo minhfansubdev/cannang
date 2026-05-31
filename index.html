@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Theo Dõi Cân Nặng Nhiều Người - Minh Fansub PTL</title>
+    <title>Hệ Thống Theo Dõi Cân Nặng Pro - Minh Fansub PTL</title>
     <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-border: rgba(255, 255, 255, 0.15);
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
-            --text-sub: #cbd5e1;
+            --text-sub: #94a3b8;
             --primary: #0ea5e9;
             --primary-hover: #0284c7;
             --success: #10b981;
@@ -35,7 +36,7 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,30 +44,54 @@
 
         .container {
             width: 100%;
-            max-width: 1100px; 
+            max-width: 1150px; 
         }
 
-        /* Header */
+        /* Header & Đồng hồ */
         header {
             text-align: center;
             margin-bottom: 2rem;
         }
 
         header h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(to right, #7dd3fc, #e0f2fe);
+            background: linear-gradient(to right, #38bdf8, #bae6fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
         }
 
-        header p {
+        .clock-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 1rem;
+        }
+
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #38bdf8;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
             color: var(--text-sub);
-            font-size: 0.95rem;
+            margin-top: 0.2rem;
+            font-weight: 500;
         }
 
-        /* Bộ lọc người dùng */
+        /* Bộ lọc */
         .filter-section {
             display: flex;
             align-items: center;
@@ -76,26 +101,33 @@
         }
 
         .filter-section label {
-            font-weight: 600;
-            color: #bae6fd;
+            font-weight: 500;
+            color: #e0f2fe;
+            font-size: 0.95rem;
         }
 
         .filter-section select {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--primary);
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
             color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
             outline: none;
             cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .filter-section select:hover {
+            border-color: rgba(56, 189, 248, 0.8);
         }
 
         .filter-section select option {
             background: #1e293b;
         }
 
-        /* Layout 2 cột */
+        /* Layout */
         .main-content {
             display: grid;
             grid-template-columns: 1fr;
@@ -103,9 +135,9 @@
             margin-bottom: 2rem;
         }
 
-        @media (min-width: 850px) {
+        @media (min-width: 900px) {
             .main-content {
-                grid-template-columns: 1fr 1.5fr;
+                grid-template-columns: 350px 1fr;
             }
         }
 
@@ -113,41 +145,46 @@
         .panel {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         .panel-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 600;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #bae6fd;
+            gap: 0.6rem;
+            color: #38bdf8;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 1rem;
         }
 
         /* Form */
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .form-group label {
             font-size: 0.85rem;
             color: var(--text-sub);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group input {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--card-border);
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
             color: white;
             font-size: 1rem;
             transition: all 0.3s ease;
@@ -156,42 +193,60 @@
         .form-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+        }
+
+        /* Styling riêng cho ô input bị khóa */
+        .form-group input[readonly] {
+            background: rgba(0, 0, 0, 0.4);
+            color: #38bdf8;
+            font-weight: 600;
+            border-color: rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+            box-shadow: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
             color: white;
             border: none;
-            padding: 0.85rem 1.5rem;
-            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
+            gap: 0.6rem;
+            transition: all 0.3s ease;
             width: 100%;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
         }
 
         .btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
         }
 
         /* Chart */
         .chart-container {
             position: relative;
-            height: 350px;
+            height: 400px;
             width: 100%;
         }
 
-        /* Bảng hiển thị */
+        /* Table */
         .table-responsive {
             overflow-x: auto;
-            margin-top: 1rem;
         }
 
         table {
@@ -201,16 +256,16 @@
         }
 
         th, td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--card-border);
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         th {
             color: var(--text-sub);
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 1px;
         }
 
         td {
@@ -218,65 +273,97 @@
             vertical-align: middle;
         }
 
+        tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
         .user-tag {
-            background: rgba(255,255,255,0.1);
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
             font-weight: 600;
-            color: #fff;
+            color: #38bdf8;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .weight-val {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #fff;
+            letter-spacing: 0.5px;
         }
 
-        .trend-up { color: var(--danger); font-weight: 600; }
-        .trend-down { color: var(--success); font-weight: 600; }
+        .trend-up { color: var(--danger); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .trend-down { color: var(--success); font-weight: 600; display: flex; align-items: center; gap: 4px; }
         .trend-flat { color: var(--text-sub); }
 
-        /* Nút thao tác */
+        .session-tag {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            margin-left: 6px;
+            font-weight: 600;
+        }
+        .session-sang { color: #fcd34d; background: rgba(252, 211, 77, 0.15); }
+        .session-trua { color: #fdba74; background: rgba(253, 186, 116, 0.15); }
+        .session-chieu { color: #6ee7b7; background: rgba(110, 231, 183, 0.15); }
+        .session-toi { color: #a5b4fc; background: rgba(165, 180, 252, 0.15); }
+        .session-dem { color: #94a3b8; background: rgba(148, 163, 184, 0.15); }
+
+        .time-detail {
+            color: #e2e8f0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .date-detail {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+
         .action-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.6rem;
             justify-content: flex-end;
         }
 
         .btn-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
             border: none;
+            font-size: 0.9rem;
         }
 
-        .btn-edit { background: rgba(14, 165, 233, 0.1); color: var(--primary); border: 1px solid rgba(14, 165, 233, 0.3); }
-        .btn-edit:hover { background: var(--primary); color: white; }
+        .btn-edit { background: rgba(255,255,255,0.05); color: #bae6fd; }
+        .btn-edit:hover { background: var(--primary); color: white; transform: translateY(-2px); }
 
-        .btn-trash { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .btn-trash:hover { background: var(--danger); color: white; }
+        .btn-trash { background: rgba(255,255,255,0.05); color: #fca5a5; }
+        .btn-trash:hover { background: var(--danger); color: white; transform: translateY(-2px); }
 
         .empty-state {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 3rem 1rem;
             color: var(--text-sub);
         }
 
         footer {
             margin-top: auto;
-            padding-top: 3rem;
+            padding-top: 4rem;
             text-align: center;
             color: var(--text-sub);
             font-size: 0.85rem;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -284,47 +371,50 @@
 
     <div class="container">
         <header>
-            <h1>Nhật Ký Cân Nặng Gia Đình & Nhóm</h1>
-            <p>Theo dõi quá trình thay đổi vóc dáng cho nhiều người trên cùng một hệ thống</p>
+            <h1>Phân Tích Cân Nặng Pro</h1>
+            <div class="clock-container">
+                <div class="time-display" id="clockTime">00:00:00</div>
+                <div class="date-display" id="clockDate">Ngày -- tháng -- năm ----</div>
+            </div>
         </header>
 
-        <!-- Bộ lọc -->
         <div class="filter-section">
-            <label for="userFilter"><i class="fa-solid fa-filter"></i> Xem báo cáo của:</label>
+            <label for="userFilter"><i class="fa-solid fa-chart-pie"></i> Dữ liệu của:</label>
             <select id="userFilter" onchange="renderApp()">
-                <option value="all">Tất cả mọi người</option>
+                <option value="all">Tất cả hồ sơ</option>
             </select>
         </div>
 
         <div class="main-content">
             <!-- Nhập dữ liệu -->
             <div class="panel">
-                <div class="panel-title"><i class="fa-solid fa-scale-balanced"></i> Cập Nhật Hôm Nay</div>
+                <div class="panel-title"><i class="fa-solid fa-pen-to-square"></i> Cập Nhật Chỉ Số</div>
                 <form id="weightForm" onsubmit="addRecord(event)">
                     <div class="form-group">
-                        <label>Tên người đo</label>
-                        <input type="text" id="personName" placeholder="VD: Nam, Lan, Mẹ..." list="nameSuggestions" required>
+                        <label>Tên hồ sơ (Người đo)</label>
+                        <input type="text" id="personName" placeholder="VD: Nam, Lan..." list="nameSuggestions" required>
                         <datalist id="nameSuggestions"></datalist>
                     </div>
                     <div class="form-group">
-                        <label>Ngày đo</label>
-                        <input type="date" id="recordDate" required>
+                        <label>Thời điểm ghi nhận (Tự động)</label>
+                        <!-- Hiển thị thời gian đếm theo giây trên form -->
+                        <input type="text" id="recordDateDisplay" readonly title="Hệ thống tự động chốt thời gian khi bấm Lưu">
                     </div>
                     <div class="form-group">
                         <label>Cân nặng (kg)</label>
                         <input type="number" id="recordWeight" step="0.1" placeholder="VD: 65.5" required>
                     </div>
                     <div class="form-group">
-                        <label>Ghi chú (Tập luyện, Ăn uống...)</label>
-                        <input type="text" id="recordNote" placeholder="VD: Ăn kiêng ngày 1...">
+                        <label>Ghi chú (Tùy chọn)</label>
+                        <input type="text" id="recordNote" placeholder="Ăn kiêng, tập gym...">
                     </div>
-                    <button type="submit" id="submitBtn" class="btn"><i class="fa-solid fa-plus"></i> Lưu Dữ Liệu</button>
+                    <button type="submit" id="submitBtn" class="btn"><i class="fa-solid fa-cloud-arrow-up"></i> Lưu Hồ Sơ</button>
                 </form>
             </div>
 
             <!-- Biểu đồ -->
             <div class="panel">
-                <div class="panel-title"><i class="fa-solid fa-chart-line"></i> Biểu Đồ Trực Quan</div>
+                <div class="panel-title"><i class="fa-solid fa-chart-area"></i> Biểu Đồ Xu Hướng</div>
                 <div class="chart-container">
                     <canvas id="weightChart"></canvas>
                 </div>
@@ -333,45 +423,92 @@
 
         <!-- Bảng lịch sử -->
         <div class="panel">
-            <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Đo</div>
+            <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Biến Động</div>
             <div class="table-responsive">
                 <table id="weightTable">
                     <thead>
                         <tr>
-                            <th>Người Đo</th>
-                            <th>Ngày Đo</th>
+                            <th>Hồ Sơ</th>
+                            <th>Thời Điểm Đo</th>
                             <th>Cân Nặng</th>
-                            <th>Biến Động</th>
+                            <th>Biến Động (Khác lần trước)</th>
                             <th>Ghi Chú</th>
                             <th style="text-align: right;">Thao Tác</th>
                         </tr>
                     </thead>
-                    <tbody id="weightList">
-                        <!-- Render qua JS -->
-                    </tbody>
+                    <tbody id="weightList"></tbody>
                 </table>
             </div>
             <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="fa-solid fa-clipboard-list" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                <p>Chưa có dữ liệu nào phù hợp.</p>
+                <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 1.5rem; opacity: 0.3;"></i>
+                <p>Kho dữ liệu trống. Hãy cập nhật chỉ số cân nặng đầu tiên của bạn!</p>
             </div>
         </div>
     </div>
 
-    <!-- Bản quyền lập trình -->
+    <!-- Bản quyền lập trình viên -->
     <footer>
         &copy; 2026 Developed by <strong>Minh Fansub PTL</strong>. All rights reserved.
     </footer>
 
     <script>
-        let weightData = JSON.parse(localStorage.getItem('health_weight_tracker_multi')) || [];
+        // Load data & Cập nhật dữ liệu cũ (nếu có) lên cấu trúc mới dùng Timestamp
+        let weightData = JSON.parse(localStorage.getItem('health_weight_tracker_pro')) || [];
+        
+        weightData.forEach(item => {
+            if(!item.timestamp) {
+                // Đổi ngày cũ (YYYY-MM-DD) thành timestamp để code mới đọc được
+                item.timestamp = new Date(item.date + 'T00:00:00').getTime();
+            }
+        });
+
         let currentEditId = null;
         let chartInstance = null;
 
-        const chartColors = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+        const chartThemes = [
+            { border: '#38bdf8', bg: 'rgba(56, 189, 248, 0.2)' },
+            { border: '#34d399', bg: 'rgba(52, 211, 153, 0.2)' },
+            { border: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)' },
+            { border: '#f87171', bg: 'rgba(248, 113, 113, 0.2)' },
+            { border: '#c084fc', bg: 'rgba(192, 132, 252, 0.2)' }
+        ];
 
-        document.getElementById('recordDate').valueAsDate = new Date();
+        // Xác định Buổi trong ngày
+        function getSessionInfo(hours) {
+            if (hours >= 5 && hours < 11) return { name: "Sáng", class: "session-sang" };
+            if (hours >= 11 && hours < 14) return { name: "Trưa", class: "session-trua" };
+            if (hours >= 14 && hours < 18) return { name: "Chiều", class: "session-chieu" };
+            if (hours >= 18 && hours < 22) return { name: "Tối", class: "session-toi" };
+            return { name: "Đêm", class: "session-dem" };
+        }
 
+        // --- TÍNH NĂNG ĐỒNG HỒ & THỜI GIAN THỰC ---
+        function updateRealTimeClock() {
+            const vnTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"}));
+            
+            const hh = String(vnTime.getHours()).padStart(2, '0');
+            const mm = String(vnTime.getMinutes()).padStart(2, '0');
+            const ss = String(vnTime.getSeconds()).padStart(2, '0');
+            
+            const yyyy = vnTime.getFullYear();
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const dd = String(vnTime.getDate()).padStart(2, '0');
+            
+            // Header clock
+            document.getElementById('clockTime').innerText = `${hh}:${mm}:${ss}`;
+            const daysOfWeek = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+            document.getElementById('clockDate').innerText = `${daysOfWeek[vnTime.getDay()]}, Ngày ${dd}/${month}/${yyyy}`;
+
+            // Form display (Chỉ nháy khi không trong trạng thái Sửa)
+            if(currentEditId === null) {
+                document.getElementById('recordDateDisplay').value = `${hh}:${mm}:${ss} | ${dd}/${month}/${yyyy}`;
+            }
+        }
+        
+        setInterval(updateRealTimeClock, 1000);
+        updateRealTimeClock();
+
+        // --- LOGIC GIAO DIỆN CHÍNH ---
         function renderApp() {
             updateFiltersAndSuggestions();
             renderTable();
@@ -383,7 +520,7 @@
             const filterSelect = document.getElementById('userFilter');
             const currentFilter = filterSelect.value;
             
-            filterSelect.innerHTML = '<option value="all">Tất cả mọi người</option>';
+            filterSelect.innerHTML = '<option value="all">Tất cả hồ sơ</option>';
             const datalist = document.getElementById('nameSuggestions');
             datalist.innerHTML = '';
 
@@ -421,18 +558,20 @@
             emptyState.style.display = 'none';
             listContainer.innerHTML = '';
 
-            filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sắp xếp Mới nhất lên đầu
+            filteredData.sort((a, b) => b.timestamp - a.timestamp);
 
             filteredData.forEach((item) => {
+                // Tìm lịch sử của người này, xếp từ Cũ -> Mới để tính biến động
                 const personHistory = weightData
                     .filter(d => d.name === item.name)
-                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+                    .sort((a, b) => a.timestamp - b.timestamp);
                 
                 const currentIndex = personHistory.findIndex(d => d.id === item.id);
                 
                 let trendInfo = '<span class="trend-flat">-</span>';
                 if (currentIndex > 0) {
-                    const prevItem = personHistory[currentIndex - 1];
+                    const prevItem = personHistory[currentIndex - 1]; // Lần cân ngay trước đó
                     const diff = (parseFloat(item.weight) - parseFloat(prevItem.weight)).toFixed(1);
                     
                     if (diff > 0) {
@@ -442,26 +581,33 @@
                     }
                 }
 
-                // ĐỊNH DẠNG NGÀY THÁNG TIẾNG VIỆT ĐẦY ĐỦ
-                const dateObj = new Date(item.date);
-                const day = dateObj.getDate().toString().padStart(2, '0');
-                const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-                const year = dateObj.getFullYear();
-                const vietnameseDateStr = `Ngày ${day} tháng ${month} năm ${year}`;
+                // Format thời gian hiển thị
+                const dateObj = new Date(item.timestamp);
+                const dd = dateObj.getDate().toString().padStart(2, '0');
+                const mm = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                const yyyy = dateObj.getFullYear();
+                const hrs = dateObj.getHours().toString().padStart(2, '0');
+                const mins = dateObj.getMinutes().toString().padStart(2, '0');
+                const secs = dateObj.getSeconds().toString().padStart(2, '0');
+
+                const session = getSessionInfo(dateObj.getHours());
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><span class="user-tag"><i class="fa-regular fa-user"></i> ${escapeHTML(item.name)}</span></td>
-                    <td style="color: #bae6fd; font-weight: 500;">${vietnameseDateStr}</td>
-                    <td><span class="weight-val">${item.weight} kg</span></td>
+                    <td>
+                        <div class="time-detail">${hrs}:${mins}:${secs} <span class="session-tag ${session.class}">${session.name}</span></div>
+                        <div class="date-detail">${dd}/${mm}/${yyyy}</div>
+                    </td>
+                    <td><span class="weight-val">${item.weight} <span style="font-size:0.8rem; font-weight:normal; color:#94a3b8">kg</span></span></td>
                     <td>${trendInfo}</td>
-                    <td style="color: var(--text-sub); font-size: 0.9rem;">${escapeHTML(item.note)}</td>
+                    <td style="color: #64748b; font-size: 0.9rem;">${escapeHTML(item.note) || '<i>Không có</i>'}</td>
                     <td style="text-align: right;">
                         <div class="action-buttons">
-                            <button class="btn-icon btn-edit" onclick="editRecord('${item.id}')" title="Sửa">
+                            <button class="btn-icon btn-edit" onclick="editRecord('${item.id}')" title="Xem/Sửa hồ sơ">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button class="btn-icon btn-trash" onclick="deleteRecord('${item.id}')" title="Xóa">
+                            <button class="btn-icon btn-trash" onclick="deleteRecord('${item.id}')" title="Xóa dữ liệu">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -473,7 +619,8 @@
 
         function renderChart() {
             const filterValue = document.getElementById('userFilter').value;
-            const ctx = document.getElementById('weightChart').getContext('2d');
+            const canvas = document.getElementById('weightChart');
+            const ctx = canvas.getContext('2d');
             
             if (chartInstance) chartInstance.destroy();
 
@@ -482,48 +629,53 @@
                 dataToChart = weightData.filter(item => item.name === filterValue);
             }
             
-            // Lấy danh sách ngày duy nhất, xếp tăng dần
-            const datesToChart = [...new Set(dataToChart.map(item => item.date))].sort((a, b) => new Date(a) - new Date(b));
+            // Cắt ra danh sách timestamps duy nhất, xếp tăng dần (trục X)
+            const timestampsToChart = [...new Set(dataToChart.map(item => item.timestamp))].sort((a, b) => a - b);
             
-            // Trục X hiển thị ngắn gọn dạng D/M cho thoáng biểu đồ
-            const labels = datesToChart.map(dateStr => {
-                const d = new Date(dateStr);
-                return `${d.getDate()}/${d.getMonth() + 1}`;
+            const labels = timestampsToChart.map(ts => {
+                const d = new Date(ts);
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const hh = String(d.getHours()).padStart(2, '0');
+                const min = String(d.getMinutes()).padStart(2, '0');
+                return `${dd}/${mm} ${hh}:${min}`;
             });
 
-            let namesToDraw = [];
-            if (filterValue === 'all') {
-                namesToDraw = [...new Set(weightData.map(item => item.name))];
-            } else {
-                namesToDraw = [filterValue];
-            }
+            let namesToDraw = filterValue === 'all' ? [...new Set(weightData.map(item => item.name))] : [filterValue];
 
             let datasets = namesToDraw.map((name, index) => {
                 const personData = weightData.filter(item => item.name === name);
-                const color = chartColors[index % chartColors.length];
+                const theme = chartThemes[index % chartThemes.length];
 
-                const dataPoints = datesToChart.map(date => {
-                    const record = personData.find(item => item.date === date);
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, theme.bg);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)'); 
+
+                const dataPoints = timestampsToChart.map(ts => {
+                    const record = personData.find(item => item.timestamp === ts);
                     return record ? parseFloat(record.weight) : null;
                 });
 
                 return {
                     label: name,
                     data: dataPoints,
-                    borderColor: color,
-                    backgroundColor: color + '33',
+                    borderColor: theme.border,
+                    backgroundColor: gradient,
                     borderWidth: 3,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: color,
-                    pointBorderWidth: 2,
+                    pointBackgroundColor: '#1e293b',
+                    pointBorderColor: theme.border,
+                    pointBorderWidth: 2.5,
                     pointRadius: 4,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#fff',
+                    fill: true,
                     spanGaps: true,
-                    tension: 0.3 
+                    tension: 0.4
                 };
             });
 
-            Chart.defaults.color = '#cbd5e1';
-            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = "'Inter', sans-serif";
 
             chartInstance = new Chart(ctx, {
                 type: 'line',
@@ -534,95 +686,111 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
                         legend: { 
                             display: filterValue === 'all',
                             position: 'top',
-                            labels: { color: '#f8fafc', usePointStyle: true }
+                            align: 'end',
+                            labels: { color: '#e2e8f0', usePointStyle: true, boxWidth: 8, font: { weight: '600' } }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            titleFont: { size: 13 },
-                            bodyFont: { size: 14, weight: 'bold' },
-                            padding: 10,
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleColor: '#38bdf8',
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 14, weight: '500' },
+                            bodySpacing: 8,
+                            padding: 15,
+                            cornerRadius: 12,
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            usePointStyle: true,
                             callbacks: {
-                                // ĐỊNH DẠNG NGÀY TIẾNG VIỆT KHI DI CHUỘT VÀO ĐIỂM TRÊN BIỂU ĐỒ
                                 title: function(context) {
-                                    const dateStr = datesToChart[context[0].dataIndex];
-                                    const d = new Date(dateStr);
-                                    const day = d.getDate().toString().padStart(2, '0');
-                                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-                                    return `Ngày ${day} tháng ${month} năm ${d.getFullYear()}`;
+                                    const ts = timestampsToChart[context[0].dataIndex];
+                                    const d = new Date(ts);
+                                    const sess = getSessionInfo(d.getHours()).name;
+                                    const strTime = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+                                    const strDate = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                                    return `Buổi ${sess} | ${strTime} - ${strDate}`;
                                 },
                                 label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y + ' kg';
+                                    return ` ${context.dataset.label}: ${context.parsed.y} kg`;
                                 }
                             }
                         }
                     },
                     scales: {
-                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' } },
-                        x: { grid: { display: false } }
+                        y: { 
+                            grid: { color: 'rgba(255, 255, 255, 0.05)', borderDash: [5, 5] },
+                            border: { display: false }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { font: { weight: '500', size: 10 } }
+                        }
+                    },
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
         }
 
         function saveToStorage() {
-            localStorage.setItem('health_weight_tracker_multi', JSON.stringify(weightData));
+            localStorage.setItem('health_weight_tracker_pro', JSON.stringify(weightData));
         }
 
         function addRecord(event) {
             event.preventDefault();
             
             const nameInput = document.getElementById('personName').value.trim();
-            const dateInput = document.getElementById('recordDate').value;
             const weightInput = document.getElementById('recordWeight').value;
             const noteInput = document.getElementById('recordNote').value.trim();
 
             const formattedName = nameInput.charAt(0).toUpperCase() + nameInput.slice(1);
 
             if (currentEditId !== null) {
+                // Sửa bản ghi cũ
                 const index = weightData.findIndex(item => item.id === currentEditId);
                 if (index !== -1) {
-                    weightData[index] = {
-                        id: currentEditId,
-                        name: formattedName,
-                        date: dateInput,
-                        weight: weightInput,
-                        note: noteInput
-                    };
+                    weightData[index].name = formattedName;
+                    weightData[index].weight = weightInput;
+                    weightData[index].note = noteInput;
+                    // Giữ nguyên timestamp cũ
                 }
                 currentEditId = null;
                 const submitBtn = document.getElementById('submitBtn');
-                submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Lưu Dữ Liệu';
-                submitBtn.style.background = 'var(--primary)';
+                submitBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Lưu Hồ Sơ';
+                submitBtn.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
             } else {
-                const existingIndex = weightData.findIndex(item => item.date === dateInput && item.name === formattedName);
-                if (existingIndex !== -1) {
-                    if (confirm(`Bạn đã nhập dữ liệu cho ${formattedName} vào ngày này rồi. Bạn có muốn cập nhật đè lên cân nặng mới không?`)) {
-                        weightData[existingIndex].weight = weightInput;
-                        weightData[existingIndex].note = noteInput;
-                    } else {
-                        return; 
-                    }
-                } else {
-                    weightData.push({
-                        id: Date.now().toString(),
-                        name: formattedName,
-                        date: dateInput,
-                        weight: weightInput,
-                        note: noteInput
-                    });
-                }
+                // Thêm mới hoàn toàn (Không ghi đè nữa, cho phép cân nhiều lần 1 ngày)
+                // Lấy thời gian CHÍNH XÁC lúc bấm nút Lưu
+                const currentTimestamp = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"})).getTime();
+                
+                weightData.push({
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5), // ID siêu độc nhất
+                    name: formattedName,
+                    timestamp: currentTimestamp,
+                    weight: weightInput,
+                    note: noteInput
+                });
             }
 
             document.getElementById('userFilter').value = formattedName;
             
+            // Clear form
             document.getElementById('recordWeight').value = '';
             document.getElementById('recordNote').value = '';
-            document.getElementById('recordDate').valueAsDate = new Date();
             document.getElementById('recordWeight').focus();
+            
+            // Gọi hàm cập nhật hiển thị đồng hồ lại cho input read-only
+            updateRealTimeClock(); 
 
             saveToStorage();
             renderApp();
@@ -632,31 +800,42 @@
             const item = weightData.find(record => record.id === id);
             if (!item) return;
 
+            // Load lại thông tin
             document.getElementById('personName').value = item.name;
-            document.getElementById('recordDate').value = item.date;
             document.getElementById('recordWeight').value = item.weight;
             document.getElementById('recordNote').value = item.note;
+
+            // Đóng băng đồng hồ ở input, hiển thị thời gian của bản ghi cần sửa
+            const d = new Date(item.timestamp);
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const yyyy = d.getFullYear();
+            const hh = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            const ss = String(d.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('recordDateDisplay').value = `ĐANG SỬA: ${hh}:${min}:${ss} | ${dd}/${mm}/${yyyy}`;
 
             currentEditId = id;
 
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Cập Nhật Dữ Liệu';
-            submitBtn.style.background = '#0284c7'; 
+            submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Cập Nhật Chỉ Số';
+            submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; 
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deleteRecord(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa bản ghi cân nặng này?')) {
+            if (confirm('Bạn muốn xóa vĩnh viễn dữ liệu này?')) {
                 weightData = weightData.filter(item => item.id !== id);
                 
                 if(currentEditId === id) {
                     currentEditId = null;
                     document.getElementById('weightForm').reset();
-                    document.getElementById('recordDate').valueAsDate = new Date();
+                    updateRealTimeClock();
                     const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Lưu Dữ Liệu';
-                    submitBtn.style.background = 'var(--primary)';
+                    submitBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Lưu Hồ Sơ';
+                    submitBtn.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
                 }
 
                 saveToStorage();
@@ -671,6 +850,7 @@
             );
         }
 
+        // Khởi động
         renderApp();
     </script>
 </body>
